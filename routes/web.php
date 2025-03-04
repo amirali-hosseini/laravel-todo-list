@@ -1,9 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\TodoController;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\{HomeController, ProjectController, TaskController, UserController};
+use Illuminate\Support\Facades\{Auth, Route};
 
 /*
 |--------------------------------------------------------------------------
@@ -16,19 +14,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Auth::routes([
+    'reset' => false,
+    'register' => false,
+    'confirm' => false,
+]);
 
-// Authentications Routes
-Route::get('login', [LoginController::class, 'showLoginForm'])->name('login');
-Route::post('login', [LoginController::class, 'login']);
-Route::post('logout', [LoginController::class, 'logout'])->name('logout');
+Route::group(['middleware' => 'auth:web'], function () {
 
+    Route::get('/', [HomeController::class, 'index'])->name('index');
 
-Route::middleware('auth')->group(function () {
+    Route::resource('projects', ProjectController::class)->except('show');
+    Route::get('/projects/{project:id}/tasks', [ProjectController::class, 'tasks'])->name('projects.tasks');
 
-    Route::get('/', [TodoController::class, 'index'])->name('index');
+    Route::resource('tasks', TaskController::class)->except('create', 'index', 'show');
 
-    Route::resource('todos', TodoController::class)->only('index', 'store', 'destroy');
+    Route::group(['middleware' => 'isAdmin'], function () {
 
-    Route::put('/todos/switch/{todo:id}', [TodoController::class, 'switch'])->name('todos.switch');
-
+        Route::resource('users', UserController::class)->except('show');
+    });
 });

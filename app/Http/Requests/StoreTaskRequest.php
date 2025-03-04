@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class TodoRequest extends FormRequest
+class StoreTaskRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -17,13 +17,15 @@ class TodoRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array|string>
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'title' => 'required|max:2048',
-            'status' => 'required|boolean'
+            'project_id' => 'required|integer|exists:projects,id',
+            'title' => 'required|string|max:255',
+            'description' => 'required|string',
+            'deadline' => 'required|date|after:today'
         ];
     }
 }
