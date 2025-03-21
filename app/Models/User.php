@@ -55,9 +55,9 @@ class User extends Authenticatable
 
     public function avatar(
         ?string $email = null,
-        int    $size = 900,
+        int $size = 900,
         string $default_image_type = 'mp',
-        bool   $force_default = false,
+        bool $force_default = false,
         string $rating = 'g',
     ): string {
         $email = is_null($email) ? $this->email : $email;
